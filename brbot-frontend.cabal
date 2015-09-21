@@ -2,8 +2,8 @@ Name:                brbot-frontend
 Version:             0.1
 Synopsis:            Project Synopsis Here
 Description:         Project Description Here
-License:             AllRightsReserved
-Author:              Author
+License:             BSD3
+Author:              Alex Schoof
 Maintainer:          maintainer@example.com
 Stability:           Experimental
 Category:            Web
