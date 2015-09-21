@@ -5,11 +5,11 @@ import           Control.Applicative
 import           Snap.Core
 import           Snap.Http.Server
 
-import qualified Data.Text as T
 import           Database.SQLite.Simple
-import           Database.SQLite.Simple.FromRow
 import Data.ByteString
+import Data.String
 import Data.String.Utils
+import Control.Monad (liftM)
 import Control.Monad.IO.Class (liftIO)
 
 data AwayField = AwayField
@@ -32,23 +32,18 @@ site = ifTop slashHandler
 
 slashHandler :: Snap ()
 slashHandler = do
-  command <- getParam "command" >>= \x -> case x of
-    Just c -> return c
-    Nothing -> return ""
-  userId <- getParam "user_id" >>= \x -> case x of
-    Just u -> return u
-    Nothing -> return ""
-  reasonTxt <- getParam "text" >>= \x -> case x of
-    Just r -> return r
-    Nothing -> return ""
-    
+  command <- liftM unpackParam $ getParam "command"
+  userId <- liftM unpackParam $ getParam "user_id" 
+  reasonTxt <- liftM unpackParam $ getParam "text"
   case command of
     "/brb" -> markUserAway userId reasonTxt
     "/back" -> markUserBack userId
     _ -> writeBS "Unrecognised Command"
     
-    -- maybe (writeBS "must specify command")
-    --       writeBS command
+
+unpackParam :: Data.String.IsString t => Maybe t -> t
+unpackParam (Just x) = x
+unpackParam Nothing = ""
 
 markUserAway :: ByteString -> ByteString -> Snap()
 markUserAway userId reasonTxt = do
